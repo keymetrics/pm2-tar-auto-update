@@ -1,0 +1,19 @@
+{
+  "name": "pm2-auto-update",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "apps": {
+    "name": "pm2-auto-update",
+    "script": "index.js",
+    "max_memory_restart": "150M"
+  },
+  "dependencies": {
+    "async": "^2.6.1",
+    "pm2": "Unitech/pm2#development",
+    "request": "^2.88.0",
+    "semver": "^5.5.1"
+  },
+  "author": "",
+  "license": "ISC"
+}
