@@ -4,19 +4,21 @@ var request = require('request')
 var forEachLimit = require('async/forEachLimit')
 var semver = require('semver')
 
-function checkIfNewVersion() {
-  var modules_url = []
+function checkIfNewVersion(cb) {
+  var modules = {}
 
   pm2.list(function(err, list) {
 
     // List all modules retrieved from internet
     list.forEach(proc => {
       if (proc.pm2_env.install_url) {
-        modules_url.push(proc)
+        var unique_name = proc.name.split(':')[0]
+        modules[unique_name] = proc
       }
     })
 
-    forEachLimit(modules_url, 1, (module, next) => {
+    forEachLimit(Object.keys(modules), 1, (module_name, next) => {
+      var module = modules[module_name]
 
       var module_url = module.pm2_env.install_url
       var version = module.pm2_env.version
@@ -43,15 +45,18 @@ function checkIfNewVersion() {
         else
           next()
       })
-
     }, () => {
       console.log('Module check done')
+      cb()
     })
 
   })
 }
 
-checkIfNewVersion()
-setInterval(() => {
-  checkIfNewVersion()
-}, 20000)
+function startWorker() {
+  checkIfNewVersion(function() {
+    setTimeout(startWorker, 20000)
+  })
+}
+
+startWorker()
