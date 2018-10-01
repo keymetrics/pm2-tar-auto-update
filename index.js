@@ -3,6 +3,7 @@ var pm2 = require('pm2')
 var request = require('request')
 var forEachLimit = require('async/forEachLimit')
 var semver = require('semver')
+var spawn = require('child_process').spawn
 
 function checkIfNewVersion(cb) {
   var modules = {}
@@ -35,7 +36,17 @@ function checkIfNewVersion(cb) {
 
         if (semver.gt(new_version, version)) {
           console.log(`Installing newer version of ${module.name} from ${version} to ${new_version}`)
-          pm2.install(module_url, (err) => {
+
+          var install = spawn('pm2', ['install', module_url], {
+            stdio : 'inherit',
+            env : {
+              HOME: process.env.HOME,
+              PATH: process.env.PATH,
+              DISPLAY: process.env.DISPLAY,
+            }
+          })
+
+          install.on('close', (code) => {
             if (err) {
               console.error(err)
             }
