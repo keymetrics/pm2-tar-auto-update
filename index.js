@@ -40,6 +40,7 @@ function checkIfNewVersion(cb) {
           var install = spawn('pm2', ['install', module_url], {
             stdio : 'inherit',
             env : {
+              PM2_HOME: process.env.PM2_HOME,
               HOME: process.env.HOME,
               PATH: process.env.PATH,
               DISPLAY: process.env.DISPLAY,
