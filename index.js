@@ -58,7 +58,6 @@ function checkIfNewVersion(cb) {
           next()
       })
     }, () => {
-      console.log('Module check done')
       cb()
     })
 
